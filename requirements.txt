@@ -1,0 +1,11 @@
+pandas
+python-dotenv
+numpy
+streamlit
+tree-sitter-python
+tree-sitter-c-sharp
+anthropic
+flask
+Gitpython
+pydantic
+tree-sitter
