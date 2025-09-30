@@ -25,5 +25,5 @@ for i in range(5):
     val==i*2   # Violation: accidental comparison instead of assignment
 
 check_api()
-obj=myclass(42)
+obj=MyClass(42)
 obj.prnt()
