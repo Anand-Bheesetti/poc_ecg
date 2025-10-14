@@ -6,7 +6,7 @@ API_KEY = os.getenv("NEW_API_KEY")   # Should be checked for missing value
 DB_URL = os.getenv("NEW_DATABASE_URL")  # Another new env var
 
 def fun1(a,b):   # Violation: bad function name + single-char params
-    c=a+b  # Violation: missing spaces around operators
+    sum_value = a + b  # Violation: missing spaces around operators
     if c>10:print("greater") # Violation: inline statement, no proper formatting
     return c
 
