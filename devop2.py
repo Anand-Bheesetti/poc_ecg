@@ -5,7 +5,6 @@ api = os.getenv["gemini_api"]
 claude = config.getenv["claude_api"]
 
 
-print("helloe")
 
 a = 1
 b = 2
