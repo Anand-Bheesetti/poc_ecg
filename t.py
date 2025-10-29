@@ -9,7 +9,7 @@ def fun1(a,b):   # Violation: bad function name + single-char params
     sum_value = a + b  # Violation: missing spaces around operators
     if c>10:print("greater") # Violation: inline statement, no proper formatting
     return c
-
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
 def check_api():
     if API_KEY == None:   # Violation: should use "is None"
         print("No API Key provided!")  
