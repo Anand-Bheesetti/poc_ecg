@@ -11,20 +11,19 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
 
-# Timeout for DB connections
 DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", "30"))
 
-# Debug mode flag
+
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
-class myclass:  # Violation: class name not in PascalCase
+class myclass:  
     def __init__(self,x):
-        self.x=x  # Violation: no spaces around assignment
-    def prnt(self):print(self.x)  # Violation: bad method name, inline print
+        self.x=x  
+    def prnt(self):print(self.x)  
 
-# Logic violation: using == for assignment inside loop (typo bug)
+
 for i in range(5):
-    val==i*2   # Violation: accidental comparison instead of assignment
+    val==i*2   
 
 check_api()
 obj=MyClass(42)
