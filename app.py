@@ -16,7 +16,7 @@ language=st.selectbox("Select the language", ["Python", "C#"])
 github_url=st.text_input("Enter the GitHub repo URL (or press Enter to skip)")
 repo_analysis=None
 if st.button("Generate"):
-
+streamlit.title("ECG POC")
     repo_analysis = analyze_github_repo(github_url) if github_url else None
     st.header("Plan")
     with st.spinner("Generating Plan...."):
@@ -49,6 +49,7 @@ if st.button("Generate"):
 
 
     
+
 
 
 
