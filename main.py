@@ -19,6 +19,7 @@ DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", "30"))
 
 # Debug mode flag
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+app=Flask(__name__)
 @app.route("/")
 def home():
     return "The ECG POC is running fine>>>"
@@ -99,4 +100,5 @@ obj.prnt()
 if __name__=="__main__":
 
     app.run(debug=True)
+
 
