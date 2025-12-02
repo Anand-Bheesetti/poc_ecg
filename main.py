@@ -56,6 +56,9 @@ def generate():
     
     debugging_results = debugging_agent(problem, plan, code, feedback, repo_analysis)
 
+    code = code_agent(problem, language, plan, repo_analysis)
+    plan = planning_agent(problem, language, github_url)
+    feedback = simulation_agent(problem, language, code)
     # Return the response
     return jsonify({
         "plan": plan,
@@ -69,4 +72,5 @@ def generate():
 if __name__=="__main__":
 
     app.run(debug=True)
+
 
