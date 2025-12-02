@@ -1,5 +1,7 @@
 import os
 import sys
+import pandas 
+import numpy
 
 # New environment variables used
 API_KEY = os.getenv("NEW_API_KEY")   # Should be checked for missing value
