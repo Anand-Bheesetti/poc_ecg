@@ -23,6 +23,8 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 def home():
     return "The ECG POC is running fine>>>"
 
+code = code_agent(problem, language, plan, repo_analysis)
+
 @app.route("/generate",methods=["GET","POST"])
 def generate():
     data=request.get_json()
@@ -67,3 +69,4 @@ def generate():
 if __name__=="__main__":
 
     app.run(debug=True)
+
