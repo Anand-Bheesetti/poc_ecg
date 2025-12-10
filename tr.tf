@@ -4,14 +4,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.0"
+      version = "~> 4.0"
     }
   }
 }
 
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 
   # access_key = "AKIAEXAMPLEACCESSKEY12345"
   # secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
@@ -36,7 +36,7 @@ resource "aws_db_instance" "example" {
   # password = "Sup3rS3cretP@ssw0rd"
 
   allocated_storage    = 20
-  skip_final_snapshot  = true
+  skip_final_snapshot  = false
 }
 
 
