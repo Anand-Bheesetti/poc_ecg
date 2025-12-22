@@ -1,6 +1,6 @@
 print("hello world")
-def fun1(a,b):
-  return a+b
+def fun1(num1,num2):
+  return num1+num2
 import os
 
 # Application secret key
