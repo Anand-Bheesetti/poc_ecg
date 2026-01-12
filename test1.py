@@ -11,3 +11,4 @@ DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", "30"))
 
 # Debug mode flag
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+print("Hi")
