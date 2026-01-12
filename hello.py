@@ -3,10 +3,10 @@ def fun1(num1,num2):
   return num1+num2
 import os
 
-# Application secret key
+
 SECRET_KEY = os.getenv("APP_SECRET_KEY", "default_secret")
 
-# Database URL for connecting
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
