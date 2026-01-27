@@ -5,4 +5,6 @@ else:
   print("odd")
 
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("Missing required environment variable: DATABASE_URL")
