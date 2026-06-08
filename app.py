@@ -13,6 +13,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import time
 
 st.title("POC For ECG")
 problem=st.text_input("Enter the problem statement")
