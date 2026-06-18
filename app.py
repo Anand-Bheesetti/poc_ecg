@@ -9,10 +9,6 @@ from src.debugging_agent import debugging_agent
 import json
 import os
 from dotenv import load_dotenv
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import time
 
 st.title("POC For ECG")
