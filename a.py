@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+
+
 number = input()
 if (number%2==0):
   print("even")
