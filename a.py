@@ -3,6 +3,6 @@ if (number%2==0):
   print("even")
 else:
   print("odd")
-print("hi helloe")
+print("hi hell")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
