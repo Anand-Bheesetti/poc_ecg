@@ -6,6 +6,7 @@ API_KEY = os.getenv("NEW_API_KEY")
 DB_URL = os.getenv("NEW_DATABASE_URL")  
 
 print("HI hellolo")
+print("HI")
 
 
 def fun1(a,b):   
