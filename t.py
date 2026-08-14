@@ -11,7 +11,7 @@ print("HI")
 
 def fun1(a,b):   
     sum_value = a + b  
-    if c>10:print("greater") 
+    if c>10:print("greater than the given value") 
     return c
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
 def check_api():
