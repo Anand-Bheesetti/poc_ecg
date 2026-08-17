@@ -5,10 +5,6 @@ import sys
 API_KEY = os.getenv("NEW_API_KEY")  
 DB_URL = os.getenv("NEW_DATABASE_URL")  
 
-print("HI hellolo")
-print("HI wyu hi hello how are you...... this is fine hi hello............")
-
-
 def fun1(a,b):   
     sum_value = a + b  
     if c>10:print("greater than the given value") 
