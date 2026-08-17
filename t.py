@@ -4,6 +4,7 @@ import sys
 
 API_KEY = os.getenv("NEW_API_KEY")  
 DB_URL = os.getenv("NEW_DATABASE_URL")  
+print("this is ananad")
 
 
 def fun1(a,b):   
