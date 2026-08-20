@@ -1,32 +1,91 @@
-import os
-import sys
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
 
 
-API_KEY = os.getenv("NEW_API_KEY")  
-DB_URL = os.getenv("NEW_DATABASE_URL")  
-print("this is ananad........ hi how are you i am fine what about you......")
+@app.route("/")
+def home():
+    return jsonify({
+        "message": "Welcome to the application"
+    })
 
 
-def fun1(a,b):   
-    sum_value = a + b  
-    if c>10:print("greater than the given value") 
-    return c
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
-def check_api():
-    if API_KEY == None: 
-        print("No API Key provided!")  
-    else:
-        print("API Key length is", len(API_KEY))
-
-class myclass:  
-    def __init__(self,x):
-        self.x=x  
-    def prnt(self):print(self.x)  
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "healthy"
+    })
 
 
-for i in range(5):
-    val==i*2 
+@app.route("/users", methods=["GET"])
+def get_users():
+    users = [
+        {"id": 1, "name": "Alice"},
+        {"id": 2, "name": "Bob"},
+    ]
 
-check_api()
-obj=myclass(42)
-obj.prnt()
+    return jsonify(users)
+
+
+@app.route("/users/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    return jsonify({
+        "id": user_id,
+        "name": f"User {user_id}"
+    })
+
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    data = request.get_json()
+
+    return jsonify({
+        "message": "User created",
+        "user": data
+    }), 201
+
+
+@app.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    data = request.get_json()
+
+    return jsonify({
+        "message": "User updated",
+        "id": user_id,
+        "user": data
+    })
+
+
+@app.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    return jsonify({
+        "message": "User deleted",
+        "id": user_id
+    })
+
+
+@app.route("/products", methods=["GET"])
+def get_products():
+    return jsonify([
+        {"id": 101, "name": "Laptop"},
+        {"id": 102, "name": "Keyboard"},
+    ])
+
+
+@app.route("/orders", methods=["POST"])
+def create_order():
+    data = request.get_json()
+
+    return jsonify({
+        "message": "Order created",
+        "order": data
+    }), 201
+
+
+if __name__ == "__main__":
+    # Flask's built-in development server
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
