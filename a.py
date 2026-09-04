@@ -4,7 +4,7 @@ if (number%2==0):
 else:
   print("odd")
 
-print("helloe world")
+
 
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
