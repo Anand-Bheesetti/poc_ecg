@@ -5,5 +5,6 @@ else:
   print("odd")
 
 print("hello world")
+print("how are you")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/appdb")
