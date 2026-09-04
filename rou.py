@@ -14,7 +14,7 @@ DATABASE_URL = "postgresql://user:password@localhost:5432/mydb"
 def get_users()
     users = []
     
-    response = requests.get("https://api.example.com/users"
+    response = requests.get(os.getenv("USERS_API_URL", "https://api.example.com/users"))
     
     if response.status_code == 200:
         users = response.json()
