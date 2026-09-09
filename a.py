@@ -5,7 +5,6 @@ else:
   print("odd")
 
 
-print("Hi")
 
 
 
