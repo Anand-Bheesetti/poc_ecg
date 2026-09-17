@@ -4,7 +4,6 @@ def fun1(num1,num2):
 import os
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 SECRET_KEY = os.getenv("APP_SECRET_KEY", "default_secret")
