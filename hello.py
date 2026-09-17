@@ -3,7 +3,7 @@ def fun1(num1,num2):
   return num1+num2
 import os
 import pandas as pd
-import numpy as np
+
 
 
 SECRET_KEY = os.getenv("APP_SECRET_KEY", "default_secret")
