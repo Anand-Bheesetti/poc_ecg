@@ -1,7 +1,7 @@
 # config.py (after changes - large PR with env & config changes)
 
 import os
-
+import os
 class Config:
     # Debugging and Logging
     DEBUG = os.getenv("APP_DEBUG", "False").lower() == "true"
