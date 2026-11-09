@@ -1,0 +1,608 @@
+<title>ILOTJ Guideline Retrieval</title>
+<style>
+  :root {
+    --bg: #F5F6F9;
+    --surface: #FFFFFF;
+    --surface-2: #EEF0F5;
+    --ink: #171A21;
+    --ink-muted: #5B6172;
+    --ink-faint: #8A90A0;
+    --border: #DBDEE7;
+    --border-strong: #C3C8D4;
+    --semantic: #0E7C86;
+    --semantic-soft: #E4F3F3;
+    --keyword: #A8650A;
+    --keyword-soft: #F7EBDA;
+    --document: #6748C9;
+    --document-soft: #ECE7FA;
+    --accent: #0E7C86;
+    --accent-ink: #FFFFFF;
+    --shadow: 0 1px 2px rgba(23,26,33,0.04), 0 8px 24px -12px rgba(23,26,33,0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10131A;
+      --surface: #171B24;
+      --surface-2: #1D212C;
+      --ink: #E8EAF0;
+      --ink-muted: #A2A8BA;
+      --ink-faint: #6E7386;
+      --border: #2A2F3D;
+      --border-strong: #3A4051;
+      --semantic: #4FD9CF;
+      --semantic-soft: #17302F;
+      --keyword: #E7AE5C;
+      --keyword-soft: #322718;
+      --document: #B39CFB;
+      --document-soft: #29223F;
+      --accent: #4FD9CF;
+      --accent-ink: #0A1414;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10131A; --surface: #171B24; --surface-2: #1D212C; --ink: #E8EAF0;
+    --ink-muted: #A2A8BA; --ink-faint: #6E7386; --border: #2A2F3D; --border-strong: #3A4051;
+    --semantic: #4FD9CF; --semantic-soft: #17302F; --keyword: #E7AE5C; --keyword-soft: #322718;
+    --document: #B39CFB; --document-soft: #29223F; --accent: #4FD9CF; --accent-ink: #0A1414;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F6F9; --surface: #FFFFFF; --surface-2: #EEF0F5; --ink: #171A21;
+    --ink-muted: #5B6172; --ink-faint: #8A90A0; --border: #DBDEE7; --border-strong: #C3C8D4;
+    --semantic: #0E7C86; --semantic-soft: #E4F3F3; --keyword: #A8650A; --keyword-soft: #F7EBDA;
+    --document: #6748C9; --document-soft: #ECE7FA; --accent: #0E7C86; --accent-ink: #FFFFFF;
+    --shadow: 0 1px 2px rgba(23,26,33,0.04), 0 8px 24px -12px rgba(23,26,33,0.12);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+  .font-head {
+    font-family: -apple-system, "Segoe UI Semibold", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+  }
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+
+  /* header */
+  header.hero { margin-bottom: 40px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--semantic);
+    background: var(--semantic-soft);
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 40px;
+    line-height: 1.08;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .hero p.lede {
+    font-size: 17px;
+    color: var(--ink-muted);
+    max-width: 640px;
+    margin: 0;
+  }
+
+  /* toc */
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 28px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  nav.toc a {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  nav.toc a:hover { color: var(--ink); border-color: var(--border-strong); }
+
+  section { margin-top: 64px; }
+  section > .section-head { margin-bottom: 22px; }
+  .kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-size: 23px;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .section-head p {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: 15px;
+    max-width: 620px;
+  }
+
+  /* setup steps */
+  .steps {
+    display: flex;
+    gap: 0;
+    counter-reset: step;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .step {
+    flex: 1 1 0;
+    min-width: 168px;
+    position: relative;
+    padding: 0 14px 0 0;
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: calc(30px + 6px);
+    right: -6px;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .step .num {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    color: var(--ink);
+    position: relative; z-index: 1;
+    margin-bottom: 12px;
+  }
+  .step h3 {
+    font-size: 13.5px;
+    margin: 0 0 5px;
+    font-weight: 700;
+  }
+  .step p {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* diagram */
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 8px 8px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  .diagram-wrap svg { display: block; width: 100%; height: auto; min-width: 620px; }
+  figcaption {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .legend-row {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+  .legend-row .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+  /* tables */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 480px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td.val, td.num { font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace; color: var(--ink); }
+  td.desc { white-space: normal; color: var(--ink-muted); min-width: 220px; }
+  .swatch { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 8px; }
+
+  .table-block + .table-block { margin-top: 18px; }
+  .table-block h3 { font-size: 14px; margin: 0 0 10px; font-weight: 700; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* callout cards */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .card .tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .card h3 { font-size: 14px; margin: 0 0 6px; }
+  .card p { font-size: 13px; color: var(--ink-muted); margin: 0; }
+
+  /* mini ordered list */
+  ol.mini {
+    counter-reset: mini;
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  ol.mini li {
+    counter-increment: mini;
+    display: flex; gap: 12px;
+    font-size: 13.5px;
+    align-items: baseline;
+  }
+  ol.mini li::before {
+    content: counter(mini);
+    flex: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transform: translateY(1px);
+  }
+  ol.mini code { background: var(--surface-2); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+  footer {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  code { font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace; }
+</style>
+
+<div class="page">
+
+  <header class="hero">
+    <span class="eyebrow">Agent Genie · LLM Studio</span>
+    <h1 class="font-head">How ILOTJ retrieves a guideline</h1>
+    <p class="lede">A guideline is never handed to an agent in full &mdash; it's retrieved per query, ranked by a blended score, then optionally topped up with defaults. This page walks through setup and the retrieval mechanism itself, so a query's path to "here's the instruction" is traceable end to end.</p>
+    <nav class="toc">
+      <a href="#setup">Connecting a guideline</a>
+      <a href="#flow">Retrieval flow</a>
+      <a href="#reference">Weights &amp; thresholds</a>
+      <a href="#tuning">Tuning cheatsheet</a>
+      <a href="#care">Getting it right</a>
+      <a href="#change">Changing parameters</a>
+    </nav>
+  </header>
+
+  <section id="setup">
+    <div class="section-head">
+      <p class="kicker">Setup</p>
+      <h2 class="font-head">Connecting a guideline to your tool</h2>
+      <p>Five steps, done once per tool integration &mdash; upgrade, wire the endpoint, then verify against a real query.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Upgrade the library</h3>
+        <p><code class="mono">llm-studio-integrations</code> &ge; 1.45.2 in your agent.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Update the agent</h3>
+        <p>Push the new version in Agent Genie / LLM Studio.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Toggle Guidelines</h3>
+        <p>Open the VertexAI / OpenAI / Anthropic integration and enable Guidelines under Agent Genie Mode.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3>Set the retrieval URL</h3>
+        <p>Paste the ILOTJ endpoint into <em>Guideline Retrieval URL</em>. Mapping ID, Scope ID, Tier ID stay blank &mdash; the UI supplies those.</p>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <h3>Verify in the trace</h3>
+        <p>Run a query, then confirm the extracted search string and fetched instructions in the tool's trace.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="section-head">
+      <p class="kicker">Mechanism</p>
+      <h2 class="font-head">From query to ranked guidance</h2>
+      <p>A query is searched against three independent spaces, merged, scored on three signals, filtered by threshold, ranked &mdash; then defaults are appended without competing for the ranked slots.</p>
+    </div>
+
+    <figure class="diagram-wrap">
+      <svg viewBox="0 0 900 1080" role="img" aria-label="Flowchart: a user query is searched in parallel across the Description, When To Apply, and When Not To Apply spaces; candidates are consolidated, keyword-scored, combined into a weighted context score, filtered against the context score threshold (dropping low scorers), ranked and capped at the final retrieval limit, then default variants are appended after ranking without counting against that limit, producing the final response.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrow-fill" />
+          </marker>
+        </defs>
+        <style>
+          .lbl { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; fill: var(--ink); }
+          .lbl-b { font-weight: 700; }
+          .lbl-m { fill: var(--ink-muted); }
+          .lbl-f { fill: var(--ink-faint); }
+          .box { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.25; }
+          .box-soft { fill: var(--surface-2); }
+          .line { stroke: var(--ink-faint); stroke-width: 1.25; fill: none; }
+          .line-dash { stroke: var(--ink-faint); stroke-width: 1.25; fill: none; stroke-dasharray: 4 4; }
+          .arrow-fill { fill: var(--ink-faint); }
+          .accent-box { stroke: var(--accent); stroke-width: 1.5; fill: var(--surface); }
+          text { font-size: 13px; }
+        </style>
+
+        <!-- Query -->
+        <rect x="320" y="20" width="260" height="56" rx="8" class="box" />
+        <text x="450" y="44" text-anchor="middle" class="lbl lbl-b">User query</text>
+        <text x="450" y="63" text-anchor="middle" class="lbl lbl-m" style="font-size:11.5px">extracted via the Search String Regex</text>
+
+        <text x="450" y="97" text-anchor="middle" class="lbl lbl-f" style="font-size:11px;font-style:italic">searched in parallel</text>
+
+        <!-- fan lines to 3 lanes -->
+        <polyline points="450,76 450,100 175,100 175,138" class="line" marker-end="url(#arrow)" />
+        <polyline points="450,76 450,100 450,138" class="line" marker-end="url(#arrow)" />
+        <polyline points="450,76 450,100 725,100 725,138" class="line" marker-end="url(#arrow)" />
+
+        <!-- Lane 1: Description -->
+        <rect x="45" y="138" width="260" height="118" rx="8" class="box" />
+        <text x="65" y="163" class="lbl lbl-b">Description</text>
+        <text x="65" y="180" class="lbl lbl-f" style="font-size:11px">primary content (variant_text)</text>
+        <text x="65" y="202" class="lbl lbl-m mono" style="font-size:11.5px">limit 10</text>
+        <text x="65" y="220" class="lbl lbl-m mono" style="font-size:11.5px">similarity &#8805; 0.70</text>
+        <text x="65" y="238" class="lbl lbl-m mono" style="font-size:11.5px">keyword &#8805; 0.25</text>
+
+        <!-- Lane 2: When To Apply -->
+        <rect x="320" y="138" width="260" height="118" rx="8" class="box" />
+        <text x="340" y="163" class="lbl lbl-b">When To Apply</text>
+        <text x="340" y="180" class="lbl lbl-f" style="font-size:11px">applicability match</text>
+        <text x="340" y="202" class="lbl lbl-m mono" style="font-size:11.5px">limit 7</text>
+        <text x="340" y="220" class="lbl lbl-m mono" style="font-size:11.5px">similarity &#8805; 0.68</text>
+        <text x="340" y="238" class="lbl lbl-m mono" style="font-size:11.5px">keyword &#8805; 0.20</text>
+
+        <!-- Lane 3: When Not To Apply -->
+        <rect x="595" y="138" width="260" height="118" rx="8" class="box" stroke-dasharray="5 4" />
+        <text x="615" y="163" class="lbl lbl-b">When Not To Apply</text>
+        <text x="615" y="180" class="lbl lbl-f" style="font-size:11px">&#8722; exclusion / penalty signal</text>
+        <text x="615" y="202" class="lbl lbl-m mono" style="font-size:11.5px">limit 5</text>
+        <text x="615" y="220" class="lbl lbl-m mono" style="font-size:11.5px">similarity &#8805; 0.85</text>
+        <text x="615" y="238" class="lbl lbl-m mono" style="font-size:11.5px">keyword &#8805; 0.50</text>
+
+        <!-- converge to consolidation -->
+        <polyline points="175,256 175,296 450,296 450,320" class="line" marker-end="url(#arrow)" />
+        <polyline points="450,256 450,320" class="line" marker-end="url(#arrow)" />
+        <polyline points="725,256 725,296 450,296 450,320" class="line" marker-end="url(#arrow)" />
+
+        <!-- Consolidation -->
+        <rect x="300" y="320" width="300" height="56" rx="8" class="box box-soft" />
+        <text x="450" y="344" text-anchor="middle" class="lbl lbl-b">Candidate consolidation</text>
+        <text x="450" y="362" text-anchor="middle" class="lbl lbl-m" style="font-size:11.5px">merge &amp; dedupe &middot; track which spaces matched</text>
+
+        <polyline points="450,376 450,410" class="line" marker-end="url(#arrow)" />
+
+        <!-- Keyword scoring -->
+        <rect x="300" y="410" width="300" height="56" rx="8" class="box box-soft" />
+        <text x="450" y="434" text-anchor="middle" class="lbl lbl-b">Keyword scoring</text>
+        <text x="450" y="452" text-anchor="middle" class="lbl lbl-m" style="font-size:11.5px">n-gram match, capped at max_keyword_score_cap</text>
+
+        <polyline points="450,466 450,500" class="line" marker-end="url(#arrow)" />
+
+        <!-- Context score -->
+        <rect x="220" y="500" width="460" height="112" rx="10" class="accent-box" />
+        <text x="450" y="527" text-anchor="middle" class="lbl lbl-b" style="font-size:14px">Context score</text>
+        <text x="450" y="554" text-anchor="middle" class="lbl mono" style="font-size:13px">
+          <tspan fill="var(--semantic)" font-weight="700">semantic</tspan><tspan> &times; 0.60  +  </tspan><tspan fill="var(--keyword)" font-weight="700">keyword</tspan><tspan> &times; 0.15  +  </tspan><tspan fill="var(--document)" font-weight="700">coverage</tspan><tspan> &times; 0.25</tspan>
+        </text>
+        <text x="450" y="580" text-anchor="middle" class="lbl lbl-m" style="font-size:11.5px">one weighted score per candidate variant</text>
+        <text x="450" y="598" text-anchor="middle" class="lbl lbl-f" style="font-size:11px;font-style:italic">weights configurable per guideline</text>
+
+        <polyline points="450,612 450,646" class="line" marker-end="url(#arrow)" />
+
+        <!-- Threshold diamond -->
+        <polygon points="450,646 562,700 450,754 338,700" class="box" />
+        <text x="450" y="695" text-anchor="middle" class="lbl" style="font-size:12px">score &#8805;</text>
+        <text x="450" y="712" text-anchor="middle" class="lbl" style="font-size:12px">context_score_threshold?</text>
+
+        <!-- no branch -->
+        <polyline points="338,700 250,700" class="line-dash" marker-end="url(#arrow)" />
+        <text x="294" y="690" text-anchor="middle" class="lbl lbl-f" style="font-size:11px">no</text>
+        <rect x="70" y="670" width="180" height="60" rx="8" class="box" stroke-dasharray="4 4" opacity="0.75" />
+        <text x="160" y="695" text-anchor="middle" class="lbl lbl-b" style="font-size:12.5px" opacity="0.85">Discarded</text>
+        <text x="160" y="713" text-anchor="middle" class="lbl lbl-f" style="font-size:10.5px">below threshold (0.70)</text>
+
+        <!-- yes branch -->
+        <text x="466" y="775" class="lbl lbl-f" style="font-size:11px">yes</text>
+        <polyline points="450,754 450,790" class="line" marker-end="url(#arrow)" />
+
+        <!-- Final ranking -->
+        <rect x="300" y="790" width="300" height="58" rx="8" class="box box-soft" />
+        <text x="450" y="814" text-anchor="middle" class="lbl lbl-b">Final ranking</text>
+        <text x="450" y="832" text-anchor="middle" class="lbl lbl-m" style="font-size:11.5px">sort by score &middot; keep top final_retrieval_limit</text>
+
+        <!-- Default variants side input -->
+        <rect x="655" y="790" width="200" height="58" rx="8" class="box" stroke-dasharray="5 4" />
+        <text x="755" y="812" text-anchor="middle" class="lbl lbl-b" style="font-size:12.5px">Default variants</text>
+        <text x="755" y="828" text-anchor="middle" class="lbl lbl-f" style="font-size:10px">checked vs. when_not_to_apply</text>
+        <text x="755" y="842" text-anchor="middle" class="lbl lbl-f" style="font-size:10px">bypasses ranking &amp; limit</text>
+
+        <polyline points="450,848 450,880" class="line" marker-end="url(#arrow)" />
+        <polyline points="755,848 755,868 450,868 450,880" class="line-dash" marker-end="url(#arrow)" />
+
+        <!-- Response assembly -->
+        <rect x="260" y="880" width="380" height="60" rx="8" class="box box-soft" />
+        <text x="450" y="904" text-anchor="middle" class="lbl lbl-b">Response assembly</text>
+        <text x="450" y="922" text-anchor="middle" class="lbl lbl-m" style="font-size:11px">ranked results, then eligible defaults appended</text>
+
+        <polyline points="450,940 450,972" class="line" marker-end="url(#arrow)" />
+
+        <!-- Final -->
+        <rect x="330" y="972" width="240" height="56" rx="28" class="accent-box" />
+        <text x="450" y="1005" text-anchor="middle" class="lbl lbl-b" style="font-size:13.5px">Final retrieved guidelines</text>
+      </svg>
+      <figcaption>Query &rarr; three parallel search spaces &rarr; consolidation &rarr; keyword scoring &rarr; weighted context score &rarr; threshold filter &rarr; ranking &rarr; default variants appended last, uncapped.</figcaption>
+      <div class="legend-row">
+        <span><span class="dot" style="background:var(--semantic)"></span>semantic similarity &mdash; embedding match</span>
+        <span><span class="dot" style="background:var(--keyword)"></span>keyword score &mdash; n-gram match</span>
+        <span><span class="dot" style="background:var(--document)"></span>document coverage &mdash; matched in multiple spaces</span>
+      </div>
+    </figure>
+  </section>
+
+  <section id="reference">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2 class="font-head">Weights &amp; thresholds</h2>
+      <p>The four config blocks that shape retrieval, with their default values.</p>
+    </div>
+
+    <div class="table-block">
+      <h3>overall_weights &mdash; how the context score is built</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Default</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><span class="swatch" style="background:var(--semantic)"></span>semantic_similarity_weight</td><td class="num">0.60</td><td class="desc">Weight on embedding-based match. Higher favors meaning over exact wording.</td></tr>
+            <tr><td><span class="swatch" style="background:var(--keyword)"></span>keyword_score_weight</td><td class="num">0.15</td><td class="desc">Weight on n-gram keyword match. Higher rewards exact textual overlap.</td></tr>
+            <tr><td><span class="swatch" style="background:var(--document)"></span>document_score_weight</td><td class="num">0.25</td><td class="desc">Weight on document coverage &mdash; credit for matching in more than one space.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-block">
+      <h3>overall_retrieval &mdash; final filtering &amp; ranking</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Default</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td class="val">final_retrieval_limit</td><td class="num">10</td><td class="desc">Max ranked results returned, before default variants are appended.</td></tr>
+            <tr><td class="val">max_keyword_score_cap</td><td class="num">3</td><td class="desc">Ceiling on keyword score, so repeated matches can't dominate ranking.</td></tr>
+            <tr><td class="val">context_score_threshold</td><td class="num">0.70</td><td class="desc">Minimum context score to survive filtering.</td></tr>
+            <tr><td class="val">include_default_without_search</td><td class="num">true</td><td class="desc">Allows default variants into the response without an explicit search match.</td></tr>
+            <tr><td class="val">enforce_default_without_search</td><td class="num">true</td><td class="desc">Forces eligible defaults in, still checked against their own when_not_to_apply.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-block">
+      <h3>Per-space scoring &mdash; Description, When To Apply, When Not To Apply</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Description</th><th>When To Apply</th><th>When Not To Apply</th></tr></thead>
+          <tbody>
+            <tr><td class="val">retrieval_limits</td><td class="num">10</td><td class="num">7</td><td class="num">5</td></tr>
+            <tr><td class="val">similarity_score_threshold</td><td class="num">0.70</td><td class="num">0.68</td><td class="num">0.85</td></tr>
+            <tr><td class="val">keyword_score_threshold</td><td class="num">0.25</td><td class="num">0.20</td><td class="num">0.50</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-muted);margin-top:10px">When Not To Apply is held to a stricter similarity bar (0.85) because a match there suppresses the variant &mdash; a loose match would wrongly exclude relevant guidance.</p>
+    </div>
+  </section>
+
+  <section id="tuning">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2 class="font-head">Tuning cheatsheet</h2>
+      <p>What to move when retrieval is under- or over-firing.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Goal</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td class="desc">Improve semantic recall</td><td class="desc">Lower similarity_score_threshold values</td></tr>
+          <tr><td class="desc">Increase precision</td><td class="desc">Raise similarity_score_threshold values</td></tr>
+          <tr><td class="desc">Favor exact wording matches</td><td class="desc">Increase keyword_score_weight</td></tr>
+          <tr><td class="desc">Favor meaning-based matching</td><td class="desc">Increase semantic_similarity_weight</td></tr>
+          <tr><td class="desc">Reduce noisy results</td><td class="desc">Increase context_score_threshold</td></tr>
+          <tr><td class="desc">Return more candidates</td><td class="desc">Increase retrieval_limits and final_retrieval_limit</td></tr>
+          <tr><td class="desc">Reduce influence of repeated keywords</td><td class="desc">Lower max_keyword_score_cap</td></tr>
+          <tr><td class="desc">Always include baseline guidance</td><td class="desc">Enable enforce_default_without_search</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="care">
+    <div class="section-head">
+      <p class="kicker">Watch out for</p>
+      <h2 class="font-head">Getting it right</h2>
+      <p>Three details that are easy to get wrong on first setup.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="tag">Search string regex</div>
+        <h3>Populate carefully</h3>
+        <p>The Guideline Retrieval Search String Regex Key runs against the incoming user query. Whatever it extracts is what retrieval searches on &mdash; get it wrong and every downstream score is scored against the wrong text.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Access</div>
+        <h3>Share &ne; LMS access</h3>
+        <p>Using a guideline for retrieval requires LMS or Global scope access. The page's Share feature only grants ILKB access &mdash; LMS access has to be granted separately via Access Management.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Citations</div>
+        <h3>Anchor is the default</h3>
+        <p>IL Guideline Citation Markdown Prompt and Anchor Prompt control how a cited learning is rendered. Anchor-type citations are recommended for consistency across products; both are configurable.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="change">
+    <div class="section-head">
+      <p class="kicker">Reference</p>
+      <h2 class="font-head">Changing retrieval parameters later</h2>
+      <p>Cross-check retrieval accuracy after any change &mdash; these values shape what an agent actually receives.</p>
+    </div>
+    <ol class="mini">
+      <li>Open <code>Instant Learning Mode</code> on Appmod.</li>
+      <li>Open your knowledge base and search for the guideline by name.</li>
+      <li>Go to <code>Configure &rarr; Learning Application</code>.</li>
+      <li>Edit the retrieval parameters and save the configuration.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Source: internal ILOTJ / LLM Studio integration guidelines. Endpoint: devllmstudio.creativeworkspace.ai/instant_learning/ilotj/il-application-retrieval.
+  </footer>
+
+</div>
