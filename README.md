@@ -1,3 +1,5 @@
+## 1. Overview: both flows share one scanner
+
 ```mermaid
 flowchart TB
     subgraph OPEN["OPENED SSE FLOW · POST /pr-reviewer/open"]
@@ -23,3 +25,5 @@ flowchart TB
     DB -.->|"read by the NEXT reassess-all"| R1
 
 ```
+
+
