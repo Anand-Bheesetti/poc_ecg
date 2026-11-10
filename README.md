@@ -122,3 +122,140 @@ flowchart TB
 
 ```
 
+## 4. Inside run_secret_scan, commit by commit
+
+```mermaid
+flowchart TB
+    IN["run_secret_scan<br/>owner, repo, base_branch, head_branch, token,<br/>fork fields, token_threshold, user, previous_scan"]
+    IN --> PREV{"previous_scan given?"}
+    PREV -->|"no: opened flow, or no earlier scan"| ALL0["already_scanned = empty set<br/>scan_mode = full"]
+    PREV -->|yes| SR{"has scanned_commit_shas?"}
+    SR -->|yes| ALL1["already_scanned = that running list"]
+    SR -->|"no: older report"| ALL2["derive it: skipped merge commits<br/>+ commits whose batch_ids are ALL completed<br/>+ commits with no batches"]
+    ALL1 --> INC["scan_mode = incremental"]
+    ALL2 --> INC
+
+    ALL0 --> BUD
+    INC --> BUD
+    BUD["threshold = payload override or SECRET_SCAN_TOKEN_THRESHOLD<br/>budget = max of threshold minus system+user prompt tokens, and MIN_BUDGET"]
+
+    BUD --> LIST["STEP 1 list_commits<br/>limit = MAX_COMMITS + count of already_scanned<br/>same repo: /repos/owner/repo/compare/base...head<br/>fork: /repos/base_owner/base_repo/compare/base_owner:base...head_owner:head<br/>paged per_page=100, oldest first"]
+    LIST --> BS["branch_shas = every sha between base and head"]
+    BS --> EXC["STEP 2 REMOVE already_scanned commits<br/>excluded_count recorded<br/>no GitHub file call, no AI call for them"]
+    EXC --> CAP["cap the remaining commits at MAX_COMMITS"]
+    CAP --> MERGE{"for each remaining commit:<br/>more than one parent?"}
+    MERGE -->|yes| SKM["skipped_commits += reason merge_commit"]
+    MERGE -->|no| FILES["STEP 3 get_commit_files sha, in parallel<br/>/repos/head_owner/head_repo/commits/sha, paged<br/>fork: read from the fork, where commits live"]
+
+    FILES --> FF{"STEP 4 for each file: skip_reason"}
+    FF -->|"vendor dir / lock file / binary ext /<br/>minified / no patch"| SKF["commit.skipped_files += path, reason"]
+    FF -->|keep| RP["render_patch<br/>'+' lines: new-file number, added_lines<br/>'-' lines: old-file number, removed_lines<br/>context lines kept, empty hunks dropped,<br/>hunks joined with ..."]
+    RP --> NC{"any added or removed lines?"}
+    NC -->|no| SKF2["skipped: no_changed_lines"]
+    NC -->|yes| FD["FileDiff into CommitDiff.files"]
+
+    FD --> MEAS["measure_files: tokens per rendered file"]
+    MEAS --> BATCH["STEP 5 build_batches, see diagram 5"]
+    BATCH --> EMPTY{"any batches?"}
+    EMPTY -->|"no: nothing new"| NOAI["no AI call, status completed"]
+    EMPTY -->|yes| LLM["STEP 6 scan_batch per batch, LLM_WORKERS in parallel<br/>user prompt = block_count, repository, commit blocks<br/>techo_llm_call, up to LLM_ATTEMPTS tries<br/>parse_findings: JSON block → json.loads → robust parser"]
+    LLM --> VAL["validate_findings, drop when:<br/>sha matches no commit in batch, prefix of 7+ ok<br/>file not sent in this batch<br/>lines not integers, swapped lines are fixed<br/>value not on an added OR removed line in range<br/>change_type corrected if mislabelled<br/>duplicate sha, file, change_type, lines, fingerprint"]
+    VAL --> FOUT["kept finding: finding_id, title, description,<br/>commit_sha, commit_url, file_name, change_type,<br/>line_url: diff anchor L=old R=new, key_name,<br/>secret_type, severity, confident_score, Reasons + citation_id,<br/>Gap, masked_value, sha256 fingerprint,<br/>start/end_line, batch_id, status Pending"]
+
+    FOUT --> SS["STEP 7 successfully_scanned_shas<br/>merge commits + commits with no scannable files<br/>+ commits whose batches ALL completed<br/>failed-batch commits left out → retried next run"]
+    NOAI --> SS
+    SKM --> SS
+    SS --> MF["STEP 8 merge_findings<br/>previous findings still on branch → carried_forward true<br/>new findings → carried_forward false<br/>dedupe sha, file, start, end, fingerprint, keep earlier"]
+    MF --> LISTOUT["scanned_commit_shas =<br/>already_scanned ∩ branch_shas, plus successfully_scanned<br/>rebased-away shas drop out"]
+    LISTOUT --> ST{"failed batches?"}
+    ST -->|none| C1["status completed"]
+    ST -->|some| C2["status partial"]
+    ST -->|all| C3["status failed"]
+    C1 --> RES
+    C2 --> RES
+    C3 --> RES
+    RES["RESULT<br/>status, scan_mode, previous_report_id, scanned_commit_shas,<br/>repository, base/head, token_threshold, budget, scanned_at,<br/>summary: total_commits, commits_already_scanned, commits_scanned,<br/>commits_skipped, files_scanned, files_skipped, lines_added,<br/>tokens_scanned, llm_batches, oversized_batches, failed_batches,<br/>total_findings, new_findings, carried_forward_findings, commits_with_findings<br/>findings, commits, skipped_commits, batches, error"]
+    RES --> SAVE[("insert_assessment_to_db<br/>$set commit_secret_scan")]
+
+    IN -. "any exception" .-> EXF["failed_scan_result<br/>status failed, error,<br/>scanned_commit_shas = previous list,<br/>findings = previous findings carried forward"]
+    EXF --> SAVE
+
+
+```
+
+## 5. Token-threshold batching (step 5 in detail)
+```mermaid
+flowchart TB
+    IN["run_secret_scan<br/>owner, repo, base_branch, head_branch, token,<br/>fork fields, token_threshold, user, previous_scan"]
+    IN --> PREV{"previous_scan given?"}
+    PREV -->|"no: opened flow, or no earlier scan"| ALL0["already_scanned = empty set<br/>scan_mode = full"]
+    PREV -->|yes| SR{"has scanned_commit_shas?"}
+    SR -->|yes| ALL1["already_scanned = that running list"]
+    SR -->|"no: older report"| ALL2["derive it: skipped merge commits<br/>+ commits whose batch_ids are ALL completed<br/>+ commits with no batches"]
+    ALL1 --> INC["scan_mode = incremental"]
+    ALL2 --> INC
+
+    ALL0 --> BUD
+    INC --> BUD
+    BUD["threshold = payload override or SECRET_SCAN_TOKEN_THRESHOLD<br/>budget = max of threshold minus system+user prompt tokens, and MIN_BUDGET"]
+
+    BUD --> LIST["STEP 1 list_commits<br/>limit = MAX_COMMITS + count of already_scanned<br/>same repo: /repos/owner/repo/compare/base...head<br/>fork: /repos/base_owner/base_repo/compare/base_owner:base...head_owner:head<br/>paged per_page=100, oldest first"]
+    LIST --> BS["branch_shas = every sha between base and head"]
+    BS --> EXC["STEP 2 REMOVE already_scanned commits<br/>excluded_count recorded<br/>no GitHub file call, no AI call for them"]
+    EXC --> CAP["cap the remaining commits at MAX_COMMITS"]
+    CAP --> MERGE{"for each remaining commit:<br/>more than one parent?"}
+    MERGE -->|yes| SKM["skipped_commits += reason merge_commit"]
+    MERGE -->|no| FILES["STEP 3 get_commit_files sha, in parallel<br/>/repos/head_owner/head_repo/commits/sha, paged<br/>fork: read from the fork, where commits live"]
+
+    FILES --> FF{"STEP 4 for each file: skip_reason"}
+    FF -->|"vendor dir / lock file / binary ext /<br/>minified / no patch"| SKF["commit.skipped_files += path, reason"]
+    FF -->|keep| RP["render_patch<br/>'+' lines: new-file number, added_lines<br/>'-' lines: old-file number, removed_lines<br/>context lines kept, empty hunks dropped,<br/>hunks joined with ..."]
+    RP --> NC{"any added or removed lines?"}
+    NC -->|no| SKF2["skipped: no_changed_lines"]
+    NC -->|yes| FD["FileDiff into CommitDiff.files"]
+
+    FD --> MEAS["measure_files: tokens per rendered file"]
+    MEAS --> BATCH["STEP 5 build_batches, see diagram 5"]
+    BATCH --> EMPTY{"any batches?"}
+    EMPTY -->|"no: nothing new"| NOAI["no AI call, status completed"]
+    EMPTY -->|yes| LLM["STEP 6 scan_batch per batch, LLM_WORKERS in parallel<br/>user prompt = block_count, repository, commit blocks<br/>techo_llm_call, up to LLM_ATTEMPTS tries<br/>parse_findings: JSON block → json.loads → robust parser"]
+    LLM --> VAL["validate_findings, drop when:<br/>sha matches no commit in batch, prefix of 7+ ok<br/>file not sent in this batch<br/>lines not integers, swapped lines are fixed<br/>value not on an added OR removed line in range<br/>change_type corrected if mislabelled<br/>duplicate sha, file, change_type, lines, fingerprint"]
+    VAL --> FOUT["kept finding: finding_id, title, description,<br/>commit_sha, commit_url, file_name, change_type,<br/>line_url: diff anchor L=old R=new, key_name,<br/>secret_type, severity, confident_score, Reasons + citation_id,<br/>Gap, masked_value, sha256 fingerprint,<br/>start/end_line, batch_id, status Pending"]
+
+    FOUT --> SS["STEP 7 successfully_scanned_shas<br/>merge commits + commits with no scannable files<br/>+ commits whose batches ALL completed<br/>failed-batch commits left out → retried next run"]
+    NOAI --> SS
+    SKM --> SS
+    SS --> MF["STEP 8 merge_findings<br/>previous findings still on branch → carried_forward true<br/>new findings → carried_forward false<br/>dedupe sha, file, start, end, fingerprint, keep earlier"]
+    MF --> LISTOUT["scanned_commit_shas =<br/>already_scanned ∩ branch_shas, plus successfully_scanned<br/>rebased-away shas drop out"]
+    LISTOUT --> ST{"failed batches?"}
+    ST -->|none| C1["status completed"]
+    ST -->|some| C2["status partial"]
+    ST -->|all| C3["status failed"]
+    C1 --> RES
+    C2 --> RES
+    C3 --> RES
+    RES["RESULT<br/>status, scan_mode, previous_report_id, scanned_commit_shas,<br/>repository, base/head, token_threshold, budget, scanned_at,<br/>summary: total_commits, commits_already_scanned, commits_scanned,<br/>commits_skipped, files_scanned, files_skipped, lines_added,<br/>tokens_scanned, llm_batches, oversized_batches, failed_batches,<br/>total_findings, new_findings, carried_forward_findings, commits_with_findings<br/>findings, commits, skipped_commits, batches, error"]
+    RES --> SAVE[("insert_assessment_to_db<br/>$set commit_secret_scan")]
+
+    IN -. "any exception" .-> EXF["failed_scan_result<br/>status failed, error,<br/>scanned_commit_shas = previous list,<br/>findings = previous findings carried forward"]
+    EXF --> SAVE
+
+
+```
+
+## 6. Across runs: what is skipped and what is kept
+
+```mermaid
+flowchart LR
+    R0["OPEN<br/>branch: A, B<br/>scan A, B<br/>findings: fA<br/>list: A, B"]
+    R1["REASSESS 1<br/>+ C pushed<br/>skip A, B · scan C<br/>findings: fA carried, fC new<br/>list: A, B, C"]
+    R2["REASSESS 2<br/>+ D pushed, D's AI batch fails<br/>skip A, B, C · scan D, fails<br/>status failed<br/>list: A, B, C, D NOT added"]
+    R3["REASSESS 3<br/>+ E pushed<br/>skip A, B, C · scan D, E<br/>D retried, no duplicates<br/>list: A, B, C, D, E"]
+    R4["REBASE<br/>A rewritten as A2<br/>scan A2 only<br/>A and fA dropped<br/>list: A2, B, C, D, E"]
+    R5["SCAN CRASH<br/>exception<br/>failed_scan_result keeps<br/>previous list + findings"]
+    R0 --> R1 --> R2 --> R3 --> R4 --> R5
+
+
+
+```
+
