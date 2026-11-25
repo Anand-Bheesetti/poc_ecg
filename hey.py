@@ -2,7 +2,7 @@ import os
 import os
 
 
-print("hi hello")
+
 print("entering the output")
 print("how are you")
 github_app_secret = "REDACTED_TOKEN_59ffc6b1"
